@@ -1,0 +1,18 @@
+version: '3'
+services:
+  db-library-api:
+    image: postgres
+    ports:
+      - 5444:5432
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: library-db
+  db-book-recorder-api:
+    image: postgres
+    ports:
+      - 5445:5432
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: book-record-service-db
