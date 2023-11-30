@@ -12,4 +12,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<AppError> bookNotFoundException(BookNotFoundException exp){
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND,exp.getMessage()),HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BookRecordServiceMessageSenderException.class)
+    public ResponseEntity<AppError> bookRecordServiceMessageSenderException(BookRecordServiceMessageSenderException exp){
+        return new ResponseEntity<>(new AppError(HttpStatus.SERVICE_UNAVAILABLE,exp.getMessage()),
+                HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }

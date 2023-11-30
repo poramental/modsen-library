@@ -42,4 +42,12 @@ public class BookRecordService {
     public List<Book> getAllBooks(){
         return bookRepository.findAll();
     }
+
+    public Book findByName(String bookName)  throws BookNotFoundException{
+        Optional<Book> book_opt = bookRepository.findByName(bookName);
+        if(book_opt.isPresent()){
+            return book_opt.get();
+        }else throw new BookNotFoundException("book with name " + bookName +" not found.");
+
+    }
 }

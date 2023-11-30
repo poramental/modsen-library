@@ -35,4 +35,9 @@ public class BookRecordController {
         return bookRecordService.getAllBooks();
     }
 
+    @GetMapping("{bookName}")
+    public Book findBookByName(@PathVariable("bookName") String bookName) throws BookNotFoundException{
+        return bookRecordService.findByName(bookName);
+    }
+
 }
