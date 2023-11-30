@@ -57,21 +57,8 @@ public class BookRecordServiceMessageSender {
             }
         }
 
-    private  <T> T sendPostMessage(HttpPost req) throws BookRecordServiceMessageSenderException{{
-        HttpClient httpClient = HttpClients.createDefault();
-        try {
-            HttpResponse resp = httpClient.execute(req);
-            String json = EntityUtils.toString(resp.getEntity());
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            T status = objectMapper.readValue(json, new TypeReference<T>() {});
-            return status;
-        }catch (IOException e){
-            log.info(e.getMessage());
-            throw new BookRecordServiceMessageSenderException("the service is not responding.");
-        }
-    }
-        }
+
 
         public HttpStatus sendMessageToDeleteBook(UUID id){
 
