@@ -1,9 +1,12 @@
 package com.libraryservice.libraryservice.api.services;
 
 
+import com.libraryservice.libraryservice.api.BookRecordServiceMessageSender;
 import com.libraryservice.libraryservice.api.dto.BookDto;
 import com.libraryservice.libraryservice.api.entity.Book;
+import com.libraryservice.libraryservice.api.exceptions.BookIsPresentException;
 import com.libraryservice.libraryservice.api.exceptions.BookNotFoundException;
+import com.libraryservice.libraryservice.api.exceptions.MessageSenderException;
 import com.libraryservice.libraryservice.api.mappers.BookMapper;
 import com.libraryservice.libraryservice.api.repo.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.swing.event.HyperlinkEvent;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,12 +24,19 @@ import java.util.stream.Collectors;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper mapper;
+    private final BookRecordServiceMessageSender messageSender;
 
-    public ResponseEntity<List<Book>> getBooks(){
-        return new ResponseEntity<>(bookRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<BookDto>> getBooks(){
+        return new ResponseEntity<>(bookRepository.findAll().stream()
+                .map(book -> mapper.entityToDto(book)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    public HttpStatus addBooks(List<BookDto> bookDtoList){
+    public HttpStatus addBooks(List<BookDto> bookDtoList) throws BookIsPresentException{
+        for(BookDto bookDto : bookDtoList){
+            Optional<Book> book_opt = bookRepository.findByISBN(bookDto.getISBN());
+            if(book_opt.isPresent()) throw new BookIsPresentException(
+                    String.format("book with ISBN : %s is present",bookDto.getISBN()));
+        }
         bookDtoList.forEach(bookDto -> {
             Book book = mapper.dtoToEntity(bookDto);
             bookRepository.save(book);
@@ -46,10 +58,10 @@ public class BookService {
         } else throw new BookNotFoundException(String.format("Book with ID = %s not found",bookId));
     }
 
-    public ResponseEntity<Book> getBookById(UUID bookId) throws BookNotFoundException{
+    public ResponseEntity<BookDto> getBookById(UUID bookId) throws BookNotFoundException{
         Optional<Book> opt_book = bookRepository.findById(bookId);
         if(opt_book.isPresent()){
-            return new ResponseEntity<Book>(opt_book.get(),HttpStatus.OK);
+            return new ResponseEntity<>(mapper.entityToDto(opt_book.get()),HttpStatus.OK);
         } else throw new BookNotFoundException(String.format("Book with ID = %s not found",bookId));
 
     }
@@ -75,17 +87,32 @@ public class BookService {
         } else throw new BookNotFoundException(String.format("Book with ISBN %s not found", bookDto.getISBN()));
     }
 
-    public List<BookDto> findBooksByName(String bookName) throws BookNotFoundException{
-        List<Book> books_db = bookRepository.findBooksByName(bookName);
-        if(!books_db.isEmpty()){
-            List<BookDto> bookDtos = new ArrayList<>();
-            for(Book book : books_db){
-                bookDtos.add(mapper.entityToDto(book));
-            }
-            return bookDtos;
-        }else throw new BookNotFoundException(String.format("Book with name %s not found",bookName));
 
+    public ResponseEntity<BookDto> takeBookByIsbn(String ISBN)
+            throws BookNotFoundException,
+            MessageSenderException,
+            UnsupportedEncodingException {
+        Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
+        if(book_opt.isPresent()){
+            messageSender.sendMessageToAddBookInRecordService(book_opt.get());
+            return new ResponseEntity<>(mapper.entityToDto(book_opt.get()),HttpStatus.OK);
+        }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
+    }
 
+    public ResponseEntity<BookDto> getBookByIsbn(String ISBN) throws BookNotFoundException{
+        Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
+        if(book_opt.isPresent()){
+            return new ResponseEntity<>(mapper.entityToDto(book_opt.get()),HttpStatus.OK);
+        }else throw new BookNotFoundException(String.format("book with ISBN : %s is not found.",ISBN));
+    }
+
+    public HttpStatus deleteBookByIsbn(String ISBN) throws BookNotFoundException{
+        Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
+        if(book_opt.isPresent()) {
+            bookRepository.delete(book_opt.get());
+            return HttpStatus.OK;
+        }
+        else throw new BookNotFoundException(String.format("book with ISBN : %s not found.", ISBN));
     }
 
 }

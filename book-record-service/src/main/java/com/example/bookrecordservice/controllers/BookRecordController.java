@@ -15,12 +15,12 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("bookRecordService")
+@RequestMapping("rest/books")
 public class BookRecordController {
 
     private final BookRecordService bookRecordService;
 
-    @PostMapping("/add-book")
+    @PostMapping()
     public HttpStatus addBook(@RequestBody BookDto bookDto){
        return bookRecordService.addBook(bookDto);
     }
@@ -35,9 +35,11 @@ public class BookRecordController {
         return bookRecordService.getAllBooks();
     }
 
-    @GetMapping("{bookName}")
+    @GetMapping("/{bookName}")
     public Book findBookByName(@PathVariable("bookName") String bookName) throws BookNotFoundException{
         return bookRecordService.findByName(bookName);
     }
+
+
 
 }

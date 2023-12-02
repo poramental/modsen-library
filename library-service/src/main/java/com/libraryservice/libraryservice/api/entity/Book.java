@@ -19,4 +19,9 @@ public class Book {
     private String author;
     private String description;
     private String genre;
+
+    public String toJsonString(){
+        return "{bookId:" + bookId +",ISBN:" + ISBN + ",name:" + name + ",author:" + author +
+                ",description:" + description + ",genre:" + genre + "}";
+    }
 }
