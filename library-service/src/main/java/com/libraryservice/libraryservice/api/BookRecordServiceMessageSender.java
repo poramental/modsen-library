@@ -42,7 +42,7 @@ public class BookRecordServiceMessageSender {
 
     public HttpStatus sendMessageToDeleteBook(UUID id) throws MessageSenderException {
         HashMap<String, String> resp = new MessageSender<HttpDelete>().sendMessage(new HttpDelete(baseUrl + "/delete-book-by-id/" + id));
-        if(resp.get("status").equals("Conflict")){
+        if(resp.get("status").equals("CONFLICT")){
             return HttpStatus.CONFLICT;
         }return HttpStatus.OK;
     }

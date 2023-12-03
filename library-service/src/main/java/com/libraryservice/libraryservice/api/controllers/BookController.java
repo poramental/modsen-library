@@ -76,4 +76,10 @@ public class BookController {
         return bookService.getBookByIsbn(ISBN);
     }
 
+    @DeleteMapping("/return-book-to-library/{ISBN}")
+    public HttpStatus returnBook(@PathVariable("ISBN") String ISBN)  throws BookNotFoundException,
+            MessageSenderException{
+        return bookService.returnBook(ISBN);
+    }
+
 }

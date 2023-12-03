@@ -105,6 +105,18 @@ public class BookService {
         }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
     }
 
+    public HttpStatus returnBook(String ISBN)
+            throws BookNotFoundException,
+            MessageSenderException
+    {
+        Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
+        if(book_opt.isPresent()){
+            HttpStatus status = messageSender.sendMessageToDeleteBook(book_opt.get().getBookId());
+            if(status != HttpStatus.OK) throw new BookNotFoundException(String.format("book with ISBN : %s not found.", ISBN));
+            return status;
+        }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
+    }
+
     public ResponseEntity<BookDto> getBookByIsbn(String ISBN) throws BookNotFoundException{
         Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
         if(book_opt.isPresent()){
