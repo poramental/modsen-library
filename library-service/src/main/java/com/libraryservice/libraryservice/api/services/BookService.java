@@ -5,11 +5,13 @@ import com.libraryservice.libraryservice.api.BookRecordServiceMessageSender;
 import com.libraryservice.libraryservice.api.dto.BookDto;
 import com.libraryservice.libraryservice.api.entity.Book;
 import com.libraryservice.libraryservice.api.exceptions.BookIsPresentException;
+import com.libraryservice.libraryservice.api.exceptions.BookIsTakenException;
 import com.libraryservice.libraryservice.api.exceptions.BookNotFoundException;
 import com.libraryservice.libraryservice.api.exceptions.MessageSenderException;
 import com.libraryservice.libraryservice.api.mappers.BookMapper;
 import com.libraryservice.libraryservice.api.repo.BookRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper mapper;
@@ -91,10 +94,13 @@ public class BookService {
     public ResponseEntity<BookDto> takeBookByIsbn(String ISBN)
             throws BookNotFoundException,
             MessageSenderException,
-            UnsupportedEncodingException {
+            UnsupportedEncodingException,
+            BookIsTakenException{
         Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
         if(book_opt.isPresent()){
-            messageSender.sendMessageToAddBookInRecordService(book_opt.get());
+            HttpStatus status = messageSender.sendMessageToAddBookInRecordService(book_opt.get());
+            log.info(status.toString());
+            if(status != HttpStatus.OK) throw new BookIsTakenException(String.format("book with ISBN : %s is taken.",ISBN));
             return new ResponseEntity<>(mapper.entityToDto(book_opt.get()),HttpStatus.OK);
         }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
     }

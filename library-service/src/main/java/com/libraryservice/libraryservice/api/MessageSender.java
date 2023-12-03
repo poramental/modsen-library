@@ -12,13 +12,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 @Slf4j
 @NoArgsConstructor
-public class MessageSender <T,V extends HttpUriRequest>{
+public class MessageSender <V extends HttpUriRequest>{
 
 
-    public T sendMessage(V req)
+    public HashMap<String,String> sendMessage(V req)
             throws MessageSenderException {
         HttpClient httpClient = HttpClients.createDefault();
         try {
@@ -26,6 +27,7 @@ public class MessageSender <T,V extends HttpUriRequest>{
             String json = EntityUtils.toString(resp.getEntity());
 
             ObjectMapper objectMapper = new ObjectMapper();
+
             return objectMapper.readValue(json, new TypeReference<>() {});
         }catch (IOException e){
             log.info(e.getMessage());

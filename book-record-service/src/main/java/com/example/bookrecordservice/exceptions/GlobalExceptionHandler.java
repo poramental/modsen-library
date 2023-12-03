@@ -1,5 +1,6 @@
 package com.example.bookrecordservice.exceptions;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,4 +13,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND,exp.getMessage()),HttpStatus.NOT_FOUND);
     }
 
+
+
+    @ExceptionHandler(BookIsPresentException.class)
+    public ResponseEntity<AppError> bookIsPresentExceptionHandler(BookIsPresentException exp){
+        return new ResponseEntity<>(new AppError(HttpStatus.CONFLICT,exp.getMessage()),
+                HttpStatus.CONFLICT);
+    }
 }

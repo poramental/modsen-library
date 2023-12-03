@@ -23,4 +23,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(HttpStatus.CONFLICT,exp.getMessage()),
                 HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(BookIsTakenException.class)
+    public ResponseEntity<AppError> bookIsTakenExceptionHandler(BookIsTakenException exp){
+        return new ResponseEntity<>(new AppError(HttpStatus.CONFLICT,exp.getMessage()),
+                HttpStatus.CONFLICT);
+    }
 }

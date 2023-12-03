@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,23 +22,29 @@ import java.util.UUID;
 public class BookRecordServiceMessageSender {
 
 
-    private final String baseUrl = "http://localhost:8765/book-record-service";
+    private final String baseUrl = "http://localhost:8765/rest/books-record";
 
 
     public  HttpStatus sendMessageToAddBookInRecordService(Book book) throws MessageSenderException,
             UnsupportedEncodingException {
-        HttpPost req = new HttpPost(baseUrl);
+        HttpPost req = new HttpPost(baseUrl + "/add-book");
         req.setHeader("Accept", "application/json");
         req.setHeader("Content-type", "application/json");
         req.setEntity(new StringEntity(book.toJsonString()));
-        return new MessageSender<HttpStatus,HttpPost>().sendMessage(req);
+        HashMap<String, String> resp = new MessageSender<HttpPost>().sendMessage(req);
+        log.info(resp.toString());
+        if(resp.get("status").equals("CONFLICT")){
+            return HttpStatus.CONFLICT;
+        }return HttpStatus.OK;
     }
 
 
 
-
     public HttpStatus sendMessageToDeleteBook(UUID id) throws MessageSenderException {
-        return new MessageSender<HttpStatus,HttpDelete>().sendMessage(new HttpDelete(baseUrl + "/" + id));
+        HashMap<String, String> resp = new MessageSender<HttpDelete>().sendMessage(new HttpDelete(baseUrl + "/delete-book-by-id/" + id));
+        if(resp.get("status").equals("Conflict")){
+            return HttpStatus.CONFLICT;
+        }return HttpStatus.OK;
     }
 
 

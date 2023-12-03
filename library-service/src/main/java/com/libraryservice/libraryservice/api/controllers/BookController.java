@@ -5,6 +5,7 @@ import com.libraryservice.libraryservice.api.dto.BookDto;
 
 import com.libraryservice.libraryservice.api.entity.Book;
 import com.libraryservice.libraryservice.api.exceptions.BookIsPresentException;
+import com.libraryservice.libraryservice.api.exceptions.BookIsTakenException;
 import com.libraryservice.libraryservice.api.exceptions.BookNotFoundException;
 import com.libraryservice.libraryservice.api.exceptions.MessageSenderException;
 import com.libraryservice.libraryservice.api.services.BookService;
@@ -65,7 +66,8 @@ public class BookController {
     public ResponseEntity<BookDto> takeBookByIsbn(@PathVariable("ISBN") String ISBN)
             throws BookNotFoundException,
             MessageSenderException,
-            UnsupportedEncodingException {
+            UnsupportedEncodingException,
+            BookIsTakenException {
         return bookService.takeBookByIsbn(ISBN);
     }
 

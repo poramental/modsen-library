@@ -2,6 +2,7 @@ package com.example.bookrecordservice.controllers;
 
 import com.example.bookrecordservice.dto.BookDto;
 import com.example.bookrecordservice.entity.Book;
+import com.example.bookrecordservice.exceptions.BookIsPresentException;
 import com.example.bookrecordservice.exceptions.BookNotFoundException;
 import com.example.bookrecordservice.services.BookRecordService;
 import lombok.AllArgsConstructor;
@@ -15,17 +16,17 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("rest/books")
+@RequestMapping("rest/books-record")
 public class BookRecordController {
 
     private final BookRecordService bookRecordService;
 
-    @PostMapping()
-    public HttpStatus addBook(@RequestBody BookDto bookDto){
+    @PostMapping("/add-book")
+    public HttpStatus addBook(@RequestBody BookDto bookDto) throws BookIsPresentException {
        return bookRecordService.addBook(bookDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-book-by-id/{id}")
     public HttpStatus deleteBook(@PathVariable("id") UUID bookId) throws BookNotFoundException {
         return bookRecordService.deleteBook(bookId);
     }
@@ -35,9 +36,14 @@ public class BookRecordController {
         return bookRecordService.getAllBooks();
     }
 
-    @GetMapping("/{bookName}")
-    public Book findBookByName(@PathVariable("bookName") String bookName) throws BookNotFoundException{
-        return bookRecordService.findByName(bookName);
+    @GetMapping("/get-book-by-isbn/{ISBN}")
+    public Book findBookByName(@PathVariable("ISBN") String ISBN) throws BookNotFoundException{
+        return bookRecordService.findByISBN(ISBN);
+    }
+
+    @DeleteMapping("/delete-book-by-isbn/{ISBN}")
+    public HttpStatus deleteBookByIsbn(@PathVariable("ISBN") String ISBN) throws BookNotFoundException{
+        return bookRecordService.deleteBookByIsbn(ISBN);
     }
 
 

@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Entity(name = "books")
@@ -21,7 +22,8 @@ public class Book {
     private String genre;
 
     public String toJsonString(){
-        return "{bookId:" + bookId +",ISBN:" + ISBN + ",name:" + name + ",author:" + author +
-                ",description:" + description + ",genre:" + genre + "}";
+        return "{\"bookId\":" + "\"" + this.bookId + "\"" +",\"isbn\":" + "\"" + this.ISBN + "\"" +",\"name\":"
+                + "\"" + this.name +  "\"" + ",\"author\":" + "\"" + this.author + "\"" +
+                ",\"description\":" + "\"" + this.description + "\"" +",\"genre\":" + "\"" + this.genre + "\"" +"}";
     }
 }
