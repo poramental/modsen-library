@@ -16,3 +16,11 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_USER: admin
       POSTGRES_DB: book-record-service-db
+  db-security-service-api:
+    image: postgres
+    ports:
+      - 5446:5432
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: security-service-db
