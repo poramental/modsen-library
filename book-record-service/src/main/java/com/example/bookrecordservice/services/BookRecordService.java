@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,7 +29,10 @@ public class BookRecordService {
         Optional<Book> book_opt = bookRepository.findByISBN(bookDto.getISBN());
         log.info(bookMapper.dtoToEntity(bookDto).toString());
         if(book_opt.isEmpty()) {
-            bookRepository.save(bookMapper.dtoToEntity(bookDto));
+            bookRepository.save(bookMapper.dtoToEntity(bookDto)
+                    .setTookDate(LocalDate.now())
+                    .setReturnDate(LocalDate.now().plusMonths(1))
+            );
             return HttpStatus.OK;
         } else throw new BookIsPresentException(String.format("book with ISBN : %s is present.",bookDto.getISBN()));
     }
