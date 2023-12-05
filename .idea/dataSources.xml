@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5445/book-record-service-db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="security-service-db@localhost" uuid="e057bd0c-a2e2-4d1c-8d0b-37d0bb953235">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5446/security-service-db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
