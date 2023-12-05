@@ -42,7 +42,7 @@ public class BookRecordService {
         if(book_opt.isPresent()){
             bookRepository.delete(book_opt.get());
             return HttpStatus.OK;
-        }else throw new BookNotFoundException("book bot found");
+        }else throw new BookNotFoundException("book not found");
     }
 
     public List<Book> getAllBooks(){

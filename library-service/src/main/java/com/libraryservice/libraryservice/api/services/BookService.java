@@ -91,27 +91,27 @@ public class BookService {
     }
 
 
-    public ResponseEntity<BookDto> takeBookByIsbn(String ISBN)
+    public ResponseEntity<BookDto> takeBookByIsbn(String ISBN, String token)
             throws BookNotFoundException,
             MessageSenderException,
             UnsupportedEncodingException,
             BookIsTakenException{
         Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
         if(book_opt.isPresent()){
-            HttpStatus status = messageSender.sendMessageToAddBookInRecordService(book_opt.get());
+            HttpStatus status = messageSender.sendMessageToAddBookInRecordService(book_opt.get(),token);
             log.info(status.toString());
             if(status != HttpStatus.OK) throw new BookIsTakenException(String.format("book with ISBN : %s is taken.",ISBN));
             return new ResponseEntity<>(mapper.entityToDto(book_opt.get()),HttpStatus.OK);
         }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
     }
 
-    public HttpStatus returnBook(String ISBN)
+    public HttpStatus returnBook(String ISBN, String token)
             throws BookNotFoundException,
             MessageSenderException
     {
         Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
         if(book_opt.isPresent()){
-            HttpStatus status = messageSender.sendMessageToDeleteBook(book_opt.get().getBookId());
+            HttpStatus status = messageSender.sendMessageToDeleteBook(book_opt.get().getBookId(), token);
             if(status != HttpStatus.OK) throw new BookNotFoundException(String.format("book with ISBN : %s not found.", ISBN));
             return status;
         }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));

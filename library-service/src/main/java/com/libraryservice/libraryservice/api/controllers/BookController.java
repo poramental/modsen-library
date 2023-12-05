@@ -63,12 +63,12 @@ public class BookController {
     }
 
     @GetMapping("/take-book-by-isbn/{ISBN}")
-    public ResponseEntity<BookDto> takeBookByIsbn(@PathVariable("ISBN") String ISBN)
+    public ResponseEntity<BookDto> takeBookByIsbn(@PathVariable("ISBN") String ISBN,@RequestHeader("Authorization") String token)
             throws BookNotFoundException,
             MessageSenderException,
             UnsupportedEncodingException,
             BookIsTakenException {
-        return bookService.takeBookByIsbn(ISBN);
+        return bookService.takeBookByIsbn(ISBN, token);
     }
 
     @GetMapping("/get-book-by-isbn/{ISBN}")
@@ -77,9 +77,9 @@ public class BookController {
     }
 
     @DeleteMapping("/return-book-to-library/{ISBN}")
-    public HttpStatus returnBook(@PathVariable("ISBN") String ISBN)  throws BookNotFoundException,
+    public HttpStatus returnBook(@PathVariable("ISBN") String ISBN, @RequestHeader("Authorization") String token)  throws BookNotFoundException,
             MessageSenderException{
-        return bookService.returnBook(ISBN);
+        return bookService.returnBook(ISBN , token);
     }
 
 }

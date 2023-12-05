@@ -25,11 +25,12 @@ public class BookRecordServiceMessageSender {
     private final String baseUrl = "http://localhost:8765/rest/books-record";
 
 
-    public  HttpStatus sendMessageToAddBookInRecordService(Book book) throws MessageSenderException,
+    public  HttpStatus sendMessageToAddBookInRecordService(Book book, String token) throws MessageSenderException,
             UnsupportedEncodingException {
         HttpPost req = new HttpPost(baseUrl + "/add-book");
         req.setHeader("Accept", "application/json");
         req.setHeader("Content-type", "application/json");
+        req.setHeader("Authorization", token);
         req.setEntity(new StringEntity(book.toJsonString()));
         HashMap<String, String> resp = new MessageSender<HttpPost>().sendMessage(req);
         log.info(resp.toString());
@@ -40,8 +41,10 @@ public class BookRecordServiceMessageSender {
 
 
 
-    public HttpStatus sendMessageToDeleteBook(UUID id) throws MessageSenderException {
-        HashMap<String, String> resp = new MessageSender<HttpDelete>().sendMessage(new HttpDelete(baseUrl + "/delete-book-by-id/" + id));
+    public HttpStatus sendMessageToDeleteBook(UUID id, String token) throws MessageSenderException {
+        HttpDelete req = new HttpDelete(baseUrl + "/delete-book-by-id/" + id);
+        req.setHeader("Authorization", token);
+        HashMap<String, String> resp = new MessageSender<HttpDelete>().sendMessage(req);
         if(resp.get("status").equals("CONFLICT")){
             return HttpStatus.CONFLICT;
         }return HttpStatus.OK;
