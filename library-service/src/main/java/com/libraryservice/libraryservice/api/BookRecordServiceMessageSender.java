@@ -41,12 +41,13 @@ public class BookRecordServiceMessageSender {
 
 
 
-    public HttpStatus sendMessageToDeleteBook(UUID id, String token) throws MessageSenderException {
-        HttpDelete req = new HttpDelete(baseUrl + "/delete-book-by-id/" + id);
+    public HttpStatus sendMessageToDeleteBook(String ISBN, String token) throws MessageSenderException {
+        HttpDelete req = new HttpDelete(baseUrl + "/delete-book-by-isbn/" + ISBN);
         req.setHeader("Authorization", token);
         HashMap<String, String> resp = new MessageSender<HttpDelete>().sendMessage(req);
-        if(resp.get("status").equals("CONFLICT")){
-            return HttpStatus.CONFLICT;
+        log.info(resp.toString());
+        if(resp.get("status").equals("NOT_FOUND")){
+            return HttpStatus.NOT_FOUND;
         }return HttpStatus.OK;
     }
 

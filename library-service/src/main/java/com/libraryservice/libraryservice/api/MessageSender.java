@@ -12,7 +12,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.sql.Struct;
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @NoArgsConstructor
@@ -27,7 +29,12 @@ public class MessageSender <V extends HttpUriRequest>{
             String json = EntityUtils.toString(resp.getEntity());
 
             ObjectMapper objectMapper = new ObjectMapper();
-
+            log.info(json);
+            if(json.contains("OK")){
+                HashMap<String,String> map = new HashMap<>();
+                map.put("status","OK");
+                return map;
+            }
             return objectMapper.readValue(json, new TypeReference<>() {});
         }catch (IOException e){
             log.info(e.getMessage());

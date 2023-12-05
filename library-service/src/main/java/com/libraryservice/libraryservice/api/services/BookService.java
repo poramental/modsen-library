@@ -111,7 +111,7 @@ public class BookService {
     {
         Optional<Book> book_opt = bookRepository.findByISBN(ISBN);
         if(book_opt.isPresent()){
-            HttpStatus status = messageSender.sendMessageToDeleteBook(book_opt.get().getBookId(), token);
+            HttpStatus status = messageSender.sendMessageToDeleteBook(ISBN, token);
             if(status != HttpStatus.OK) throw new BookNotFoundException(String.format("book with ISBN : %s not found.", ISBN));
             return status;
         }else throw new BookNotFoundException(String.format("Book with ISBN : %s is not found", ISBN));
