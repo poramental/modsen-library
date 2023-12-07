@@ -19,7 +19,7 @@ docker compose -f compose-env.yaml up -d
 spring.datasource.username=admin
 spring.datasource.password=admin
 ```
-### Возможен баг с falywaydb в security service : Не создается миграция с таблицей app_user. Если такой баг присутствует - сделать ее вручную)
+### Возможен баг с flywaydb в security service : Не создается миграция с таблицей app_user. Если такой баг присутствует - сделать ее вручную)
 
 ## 4)Запустить проект
 
@@ -28,5 +28,5 @@ spring.datasource.password=admin
 ### 1)Запустить EurekaServerApplication
 ### 2)Запустить ApiGatewayApplication
 ### 3)Запустить SuecurityServiceApplication
-### 4)Запустить BookServiceApplication
+### 4)Запустить BookRecordServiceApplication
 ### 5)Запустить LibraryServiceApplication
